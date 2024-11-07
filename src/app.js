@@ -13,6 +13,11 @@ app.use(helmet());
 app.use(cors()); 
 app.use(express.json())
 
+app.use( (req,res,next) =>{
+  console.log('handling request : ',req.url+" with method "+req.method);
+  next();
+})
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
