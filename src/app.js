@@ -22,15 +22,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get('/task', async (req, res) => {
+app.post('/task', async (req, res) => {
   try {
-    const task ={
-      title: "new task",
-      priority: 1
-    }
-    taskController.addNewTask(task)
+    taskController.addNewTask(req.body)
     .then(result=>{
-      console.log('result is ',result)
       if(result) return res.status(200).send("Task added successfully")
       else return res.status(500).json({message:result})
     })
