@@ -1,0 +1,40 @@
+import express from 'express';
+import * as dotenv from 'dotenv'
+import cors from 'cors' 
+import helmet from 'helmet'
+
+import {taskController} from "./Controllers/index.js"
+
+dotenv.config()
+const app = express();
+const port = process.env.PORT || 4000;
+
+app.use(helmet()); 
+app.use(cors()); 
+app.use(express.json())
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+app.get('/task', async (req, res) => {
+  try {
+    const task ={
+      title: "new task",
+      priority: 1
+    }
+    const result = await taskController.addNewTask(task)
+    if(result == "success") return res.status(200).send("Task added successfully")
+    else return res.status(500).send(result)
+
+  } catch (err) {
+    console.error('Error in adding task/app.js:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+
+export default app;
