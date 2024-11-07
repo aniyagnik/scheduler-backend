@@ -28,9 +28,12 @@ app.get('/task', async (req, res) => {
       title: "new task",
       priority: 1
     }
-    const result = await taskController.addNewTask(task)
-    if(result == "success") return res.status(200).send("Task added successfully")
-    else return res.status(500).send(result)
+    taskController.addNewTask(task)
+    .then(result=>{
+      console.log('result is ',result)
+      if(result) return res.status(200).send("Task added successfully")
+      else return res.status(500).json({message:result})
+    })
 
   } catch (err) {
     console.error('Error in adding task/app.js:', err);
