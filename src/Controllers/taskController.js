@@ -40,6 +40,19 @@ const addNewTask = (task) => {
     }
 }
 
+const updateTask = (task) => {
+  try {  
+    return taskDatabase.updateTaskById(task)
+      .then((result) =>result)
+      .catch((err) =>  {
+        console.error('Error adding task to db in catch, controller:', err);
+        return err;
+      });
+  } catch (err) {
+      console.error('Error adding tasks to db :', err);
+  }
+}
+
 const deleteTaskById = (taskId) => {
   try {  
     return taskDatabase.deleteTask(taskId)
@@ -70,6 +83,7 @@ export {
     getAllTasks,
     getTaskById,
     addNewTask,
+    updateTask,
     deleteTaskById,
     deleteAllTasks
 };

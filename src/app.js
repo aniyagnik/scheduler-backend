@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 // get all task
 app.get('/task', async (req, res) => {
   try {
-    taskController.getAllTasks()
+    taskController.getAllTasks(req.body)
     .then(result=>res.status(200).json({ message: result }))
     .catch((err) => res.status(500).json({ message: 'Internal Server Error' }));
   } catch (err) {
@@ -38,7 +38,10 @@ app.get('/task', async (req, res) => {
 app.get('/task/:id', async (req, res) => {
   try {
     taskController.getTaskById(req.params.id)
-    .then(result=>res.status(200).json({ message: result }))
+    .then(result=>{
+      if(result==null) res.status(404).send("Task does not exists.")
+      else res.status(200).json({ message: result })
+    })
     .catch((err) => res.status(500).json({ message: 'Internal Server Error' }));
   } catch (err) {
     console.error('Error in getting  task by id/app.js:', err);
@@ -51,6 +54,22 @@ app.post('/task', async (req, res) => {
   try {
     taskController.addNewTask(req.body)
     .then(result=>res.status(200).send("Task added successfully"))
+    .catch((err) => res.status(500).json({ message: 'Internal Server Error' }));
+  } catch (err) {
+    console.error('Error in adding task/app.js:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// update task
+app.put('/task/update', async (req, res) => {
+  try {
+    taskController.updateTask(req.body)
+    .then(result=>{
+      console.log("asdas ",result)
+      if(result==null) res.status(404).send("Task does not exists, no update")
+      else res.status(200).send("Task updated successfully")  
+    })
     .catch((err) => res.status(500).json({ message: 'Internal Server Error' }));
   } catch (err) {
     console.error('Error in adding task/app.js:', err);

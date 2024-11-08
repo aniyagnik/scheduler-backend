@@ -15,7 +15,7 @@ const getAllTasks = () =>
 
  // get document by id from the collection
 const getTaskById = (taskId) => 
-  Task.find({_id:taskId})
+  Task.findById(taskId)
     .then((result) => {
       console.log('Task retrived by id successfully, db ',result);
       return result;
@@ -34,6 +34,19 @@ const addTask = (task) =>
     })
     .catch((err) => {
       console.error('Error inserting Task, db ', err);
+      return err;
+    });
+
+
+// delete all document from the collection
+const updateTaskById = (updatedTask) => 
+  Task.findByIdAndUpdate(updatedTask._id,updatedTask)
+    .then((result) => {
+      console.log('Task updated successfully, db ',result);
+      return result;
+    })
+    .catch((err) => {
+      console.error('Error in updating task, db ', err);
       return err;
     });
 
@@ -66,6 +79,7 @@ export {
   getAllTasks,
   getTaskById,
   addTask,
+  updateTaskById,
   deleteTask,
   deleteAllTasks
 }
