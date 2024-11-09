@@ -2,12 +2,25 @@ import express from 'express';
 import * as dotenv from 'dotenv'
 import cors from 'cors' 
 import helmet from 'helmet'
+import session from 'express-session'
+import passport from 'passport'
 
-import {taskController} from "./Controllers/index.js"
+import {taskController, loginController} from "./Controllers/index.js"
+
+const app = express();
+const PORT = process.env.PORT || 8080;
+const SECRET = process.env.SECRET || 'secret'
 
 dotenv.config()
-const app = express();
-const port = process.env.PORT || 4000;
+
+app.use(session({
+  secret: SECRET,
+  resave: false ,
+  saveUninitialized: true ,
+}))
+
+app.use(passport.initialize()) 
+app.use(passport.session())
 
 app.use(helmet()); 
 app.use(cors()); 
@@ -101,8 +114,23 @@ app.delete('/task/deleteAll', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.get('/dashboard', loginController.checkAuthenticated ,(req,res) => {
+  console.log('in dashboard')
+  res.status(200).send('in dashboard')
+})
+
+app.get('/auth/google',passport.authenticate('google',{scope:['email','profile']}))
+  
+app.get('/auth/google/callback',passport.authenticate('google', {successRedirect: '/dashboard',failureRedirect: '/'}));
+
+app.post("/logout", (req,res) => {
+  req.logOut()
+  res.redirect("/")
+  console.log("User Logged out")
+})
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 export default app;
