@@ -16,7 +16,7 @@ const authUser = (request, accessToken, refreshToken, profile, done) => {
 passport.use(new GoogleStrategy({
   clientID:     GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:8080/dashboard",
+  callbackURL: "http://localhost:8080/auth/google/callback",
   passReqToCallback: true
 }, authUser));
 
