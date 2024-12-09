@@ -1,89 +1,97 @@
-import {taskDatabase} from "../Databases/index.js"
+import {Task} from '../schemas/index.js'
+import {ApiError, ApiResponse} from "../utils/index.js"
 
-const getAllTasks = (task) => {
-  try {  
-    return taskDatabase.getAllTasks()
-      .then((result) =>result)
-      .catch((err) =>  {
-        console.error('Error in getting all tasks in db in catch, controller:', err);
-        return err;
-      });
-  } catch (err) {
-      console.error('Error in getting all tasks to db :', err);
+// get all documents from the collection
+const getAllTasks = async (req,res) =>{ 
+  try{
+    const tasks = await Task.find({})
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        tasks,
+        "all tasks fetched successfully"
+    ))
+  } 
+  catch(err) {
+      console.error('Error in fetching all Tasks, ', err);
+      throw new ApiError(500, "Internal Server Error")
   }
 }
 
-
-const getTaskById = (taskId) => {
-  try {  
-    return taskDatabase.getTaskById(taskId)
-      .then((result) =>result)
-      .catch((err) =>  {
-        console.error('Error in getting task by id in db in catch, controller:', err);
-        return err;
-      });
-  } catch (err) {
-      console.error('Error in getting task by id to db :', err);
+ // get document by id from the collection
+const getTaskById = async(req,res) =>{
+  try{
+    const task = await Task.findById(req.params.taskId)
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        task,
+        "task fetched successfully" // for task=null?????
+    ))
+  }catch{
+    console.error('Error in getting all Tasks, ', err);
+    throw new ApiError(500, "Internal Server Error")
   }
-}
+} 
 
-const addNewTask = (task) => {
-    try {  
-      return taskDatabase.addTask(task)
-        .then((result) =>result)
-        .catch((err) =>  {
-          console.error('Error adding task to db in catch, controller:', err);
-          return err;
-        });
-    } catch (err) {
-        console.error('Error adding tasks to db :', err);
-    }
-}
-
-const updateTask = (task) => {
-  try {  
-    return taskDatabase.updateTaskById(task)
-      .then((result) =>result)
-      .catch((err) =>  {
-        console.error('Error adding task to db in catch, controller:', err);
-        return err;
-      });
-  } catch (err) {
-      console.error('Error adding tasks to db :', err);
+// Insert document into the collection
+const createTask = async(req,res) => {
+  try{
+    const newTask = req.body
+    const task = await Task.create(newTask)
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        task,
+        "task created successfully"
+    ))
+  }catch(err){
+    console.error('Error creating Task, ', err);
+    throw new ApiError(500, "Internal Server Error")
   }
-}
+} 
 
-const deleteTaskById = (taskId) => {
-  try {  
-    return taskDatabase.deleteTask(taskId)
-      .then((result) =>result)
-      .catch((err) =>  {
-        console.error('Error deleting task from db in catch, controller:', err);
-        return err;
-      });
-  } catch (err) {
-      console.error('Error deleting tasks from db :', err);
+// update document from the collection
+const updateTaskById = async (req,res) => {
+  try{
+    let task=await Task.findOneAndUpdate({_id:req.params.taskId},req.body)
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        task,
+        "task updaated successfully"
+    ))
+  }catch(err){
+    console.error('Error updating Task, ', err);
+    throw new ApiError(500, "Internal Server Error")
   }
-}
+} 
 
-const deleteAllTasks = () => {
-  try {  
-    return taskDatabase.deleteAllTasks()
-      .then((result) =>result)
-      .catch((err) =>  {
-        console.error('Error deleting task from db in catch, controller:', err);
-        return err;
-      });
-  } catch (err) {
-      console.error('Error deleting tasks from db :', err);
+// delete document from the collection
+const deleteTask = async (req,res) =>{
+  try{
+    const task = await Task.deleteOne({_id:req.params.taskId})
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        task,
+        "task deleted successfully"
+    ))
+  }catch(err){
+    console.error('Error deleting Task, ', err);
+    throw new ApiError(500, "Internal Server Error")
   }
-}
+} 
 
 export {
-    getAllTasks,
-    getTaskById,
-    addNewTask,
-    updateTask,
-    deleteTaskById,
-    deleteAllTasks
-};
+  getAllTasks,
+  getTaskById,
+  createTask,
+  updateTaskById,
+  deleteTask
+}
