@@ -9,8 +9,14 @@ const taskModel = new mongoose.Schema({
     type: Number,
     require:true
   }, // priority
-  startDate: { type: Date, default: Date.now(),require:true }, 
-  endDate: { type: Date, default: Date.now() },
+  startDate: { 
+    type: Date, 
+    default: Date.now(),
+  }, 
+  endDate: { 
+    type: Date, 
+    default: Date.now() 
+  },
   type: {
     type: String,
     enum: ["measurable", "yes or no"],

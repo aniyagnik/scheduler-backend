@@ -1,4 +1,4 @@
-import {Task} from '../schemas/index.js'
+import {Task} from '../models/index.js'
 import {ApiError, ApiResponse} from "../utils/index.js"
 
 // get all documents from the collection

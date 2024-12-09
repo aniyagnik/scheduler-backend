@@ -1,4 +1,4 @@
-import Task from './taskSchema.js';
+import Task from './taskModel.js';
 //exporting app
 export {
     Task
