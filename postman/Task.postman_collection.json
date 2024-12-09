@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "http://localhost:3000/",
+			"name": "get all tasks",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -26,7 +26,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/task",
+			"name": "get task by id",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -45,33 +45,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/task/:id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/task/:id",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"task",
-						":id"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "672c63f0e0e237bb3458768e"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:3000/task",
+			"name": "create task",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -99,13 +73,13 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/task/update",
+			"name": "update task by id",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"_id\":\"23479823744324\",\n    \"title\": \"newtask 101\",\n    \"priority\": 2\n}",
+					"raw": "{\n    \"_id\": \"672e14674a6d0af32b3f2483\",\n    \"title\": \"newtask 104\",\n    \"priority\": 2,\n    \"__v\": 0\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -128,7 +102,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/task/delete/:id\n",
+			"name": "delete task by id",
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -156,28 +130,8 @@
 					"variable": [
 						{
 							"key": "id\n",
-							"value": "672dfb2257ff90c2d76da07c"
+							"value": "672e14674a6d0af32b3f2483"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:3000/task/deleteAll",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/task/deleteAll",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"task",
-						"deleteAll"
 					]
 				}
 			},
