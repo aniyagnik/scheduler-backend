@@ -1,5 +1,7 @@
 import Task from './taskModel.js';
-//exporting app
+import User from './userModel.js';
+
 export {
+    User,
     Task
 };

@@ -1,52 +1,108 @@
 import passport from 'passport'
 import GoogleStrategy from 'passport-google-oidc'
 
+import {ApiError, ApiResponse} from "../utils/index.js"
+import { User} from "../models/index.js"
+
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
 
-const authUser = (request, accessToken, refreshToken, profile, done) => {
-  console.log("in auth", profile)
-  console.log("done : ", done)
-  console.log("accessToken : ", accessToken)
-  console.log("refreshToken : ", refreshToken)
-  profile={
-    username:refreshToken.displayName,
-    emailId:refreshToken.emails[0].value,
+const googleAuth = passport.authenticate('google',{
+	scope:['email','profile'],
+	accessType: 'offline',
+	approvalPrompt: 'force'
+})
 
+const loginUser = async (request, aToken, profile, done) => {
+  const username=profile.displayName, email=profile.emails[0].value
+  let user = await User.findOne({email})
+
+  if (!user) {
+    const createdUser = await User.create({
+      firstName:profile.name.givenName,
+      lastName:profile.name.familyName,
+      email, 
+      username: username.toLowerCase()
+    })
+    if (!createdUser) {
+      throw new ApiError(500, "Something went wrong while registering the user")
+    }
+    user = createdUser
   }
-  return done(null, profile);
+  const accessToken = await generateAccessAndRefereshTokens(user._id)
+  user={
+    id:user._id,
+    displayName:user.displayName,
+    email:user.email,
+    accessToken:accessToken
+  }
+  return done(null, user);
+}
+
+const logoutUser = async(req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+        $unset: {
+            refreshToken: 1 // this removes the field from document
+        }
+    },
+    {
+        new: true
+    }
+  )
+  req.session.destroy()
+  return res
+  .status(200)
+  .json(new ApiResponse(200, {}, "User logged Out"))
 }
 
 //Use "GoogleStrategy" as the Authentication Strategy
 passport.use(new GoogleStrategy({
-  clientID:     GOOGLE_CLIENT_ID,
-  clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://localhost:8080/auth/google/callback",
-  passReqToCallback: true
-}, authUser));
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:8080/api/v1/user/auth/google/callback",
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ],
+    passReqToCallback: true
+ }, 
+ loginUser)
+);
 
 passport.serializeUser( (user, done) => { 
-  console.log(`Serialize User: `)
-  console.log(user)
+  console.log(`in Serialize User `)
   // The USER object is the "authenticated user" from the done() in authUser function.
   // serializeUser() will attach this user to "req.session.passport.user.{user}", so that it is tied to the session object for each session.  
   done(null, user)
 } )
 
 passport.deserializeUser((user, done) => {
-  console.log(`Deserialized User : `)
-  console.log(user)
+  console.log(`in Deserialized User `)
   // This is the {user} that was saved in req.session.passport.user.{user} in the serializationUser()
   // deserializeUser will attach this {user} to the "req.user.{user}", so that it can be used anywhere in the App.
   done (null, user)
 }) 
 
-//Use the req.isAuthenticated() function to check if user is Authenticated
-const checkAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) return next()
-  res.redirect("/")
+const generateAccessAndRefereshTokens = async(userId) =>{
+  try {
+    const user = await User.findById(userId.toString())
+    const accessToken = user.generateAccessToken()
+    const refreshToken = user.generateRefreshToken()
+
+    user.refreshToken = refreshToken
+    await user.save({ validateBeforeSave: false })
+
+    return accessToken
+  } catch (error) {
+    console.log(error)
+    throw new ApiError(500, "Something went wrong while generating referesh and access token")
+  }
 }
 
 export {
-    checkAuthenticated
+  googleAuth,
+  loginUser,
+  logoutUser
 }
