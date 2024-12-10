@@ -23,5 +23,6 @@ router.get('/dashboard', verifyJWT ,(req,res) => {
 		)
 })  
 router.get("/logout",verifyJWT, loginController.logoutUser)
+router.route("/refresh-token").post(loginController.refreshAccessToken)
 
 export default router
