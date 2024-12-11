@@ -21,6 +21,7 @@ const loginUser = async (request, aToken, profile, done) => {
     const createdUser = await User.create({
       firstName:profile.name.givenName,
       lastName:profile.name.familyName,
+      displayName:profile.displayName,
       email, 
       username: username.toLowerCase()
     })

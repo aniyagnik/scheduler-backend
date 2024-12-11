@@ -6,7 +6,7 @@ import {
     updateTaskById,
     deleteTask,
 } from "../Controllers/taskController.js"
-//import {verifyJWT} from "../middlewares/auth.middleware.js"
+// import {verifyJWT} from "../middlewares/index.js"
 
 const router = Router();
 //router.use(verifyJWT); 
