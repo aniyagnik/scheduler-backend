@@ -42,6 +42,10 @@ const userModel = new mongoose.Schema({
       ref: "Task"
     }
   ],
+  priorityPoints:{ // priority high-100 points, med - 70 points,low - 40 points
+    type:[Number],
+    default:[100,70,40]
+  },
   refreshToken: {
     type: String
   }

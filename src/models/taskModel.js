@@ -9,22 +9,30 @@ const taskModel = new mongoose.Schema({
     type: String,
     require:true
   }, 
+  // type  - value
+  // once  - 01/01/2025 // task on date
+  // daily - 01/01/2024 // starts from date
+  // weekly- 1,2,3,4 // day number, mon-1,tue-2,wed-3,thu-4,fri-5,sat-6,sun-7
+  // month - 01 // date of month
   repetition:{
+    type:{
+      type: String,
+      enum:['once','daily','weekly','month'],
+      require:true
+    },
+    value:{
+      type:String,
+    }
+  },
+  priority:{  
     type: String,
-    enum:['once','daily','weekly','month'],
+    enum: ["high", "mid",'low'],
     require:true
   },
-  priority:{  // priority
-    type: Number,
+  status: {
+    type: String,
+    enum: ["ongoing", "halt",'complete','yet to start'],
     require:true
-  }, 
-  startDate: { 
-    type: Date, 
-    default: Date.now(),
-  }, 
-  endDate: { 
-    type: Date, 
-    default: Date.now() 
   },
   type: { // measurable or yes/no
     type: String,
@@ -35,15 +43,25 @@ const taskModel = new mongoose.Schema({
     type: String,
     require:true
   }, 
-  targetType: { // atleast or atmost
+  targetType: { // atleast or atmost, only required if type is measurable
     type: String,
     enum: ["atleast", "atmost"],
-    require:true
   }, 
-  target: { // target value 
+  target: { // target value, only required if type is measurable 
     type: Number,
     require:true
   }, 
+  score: [  // score achieved, if type is yes|no, points-1(done), points-0(not done) 
+    {
+      date:{
+        type:Number
+      },
+      points:{
+        type:Number
+      }
+    }
+  ], 
+  // points gained can be calculated by score[i]/target * pointsAssigned
   storeTimePeriod: {  // whether to store time of task or not
     type: Boolean,
     require:true
@@ -53,26 +71,7 @@ const taskModel = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref:'TestDuration'
     },
-  ],
-  status: {
-    type: String,
-    enum: ["ongoing", "halt",'complete','yet to start'],
-    require:true
-  },
-  score: [  // score achieved
-    {
-      date:{
-        type:Number
-      },
-      points:{
-      type:Number
-      }
-    }
-  ], 
-  pointsAssigned: { // points earned by partial/complete fulfillment of task
-    type:Number
-  }, 
-  // points gained can be calculated by score[i]/target * pointsAssigned
+  ]
 });
 
 const Task = mongoose.model('Task', taskModel);
@@ -83,17 +82,14 @@ export default Task;
 // {
 //   userId:'sd423wder23', 
 //   title: 'study', 
-//   repetition:'daily',
-//   priority:1, 
-//   startDate: '01/01/2025', 
-//   endDate: '01/01/2111',
-//   type: 'atmost', 
+//   repetition:{type:'daily',value:'01/01/2025'},
+//   priority:high, 
+//   status: 'yet to start',
+//   type: 'measurable', 
 //   unit: 'hours', 
 //   targetType: 'atleast', 
 //   target: 10, 
+//   score: [{date:'01/01/2024',points:4},{date:'02/01/2024',points:8}], 
 //   storeTimePeriod: true, 
 //   timePeriod:['sfsdfsdf2','213eqwdd','12qewdasas'],
-//   status: 'yet to start',
-//   score: [{date:'01/01/2024',points:4},{date:'02/01/2024',points:8}], 
-//   pointsAssigned: 100
 // }
