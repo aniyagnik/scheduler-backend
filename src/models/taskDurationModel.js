@@ -12,7 +12,7 @@ const taskDurationModel = new mongoose.Schema({
   ]
 })
 
-const TaskDuration = mongoose.model('Duration',taskDurationModel);
+const TaskDuration = mongoose.model('TaskDuration',taskDurationModel);
 
 export default TaskDuration;
 
