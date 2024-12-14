@@ -15,14 +15,18 @@ const taskModel = new mongoose.Schema({
   // weekly- 1,2,3,4 // day number, mon-1,tue-2,wed-3,thu-4,fri-5,sat-6,sun-7
   // month - 01 // date of month
   repetition:{
-    type:{
-      type: String,
-      enum:['once','daily','weekly','month'],
-      require:true
-    },
-    value:{
-      type:String,
-    }
+    type: String,
+    enum:['once','daily','weekly','month'],
+    require:true
+    
+  },
+  startFrom:{
+    type:Date,
+    default:Date.now()
+  },
+  endFrom:{ //req for once
+    type:Date,
+    default:new Date(86400000000000)
   },
   priority:{  
     type: String,
@@ -39,15 +43,14 @@ const taskModel = new mongoose.Schema({
     enum: ["measurable", "yes or no"],
     require:true
   }, 
-  unit: { // hours,rep, kms etc. can be null 
+  unit: { // hours,rep, kms etc. null if type = yes|no
     type: String,
-    require:true
   }, 
-  targetType: { // atleast or atmost, only required if type is measurable
+  targetType: { // atleast or atmost, only required if type is measurable null if type = yes|no
     type: String,
     enum: ["atleast", "atmost"],
   }, 
-  target: { // target value, only required if type is measurable 
+  target: { // target value, only required if type is measurable. null if type = yes|no
     type: Number,
     require:true
   }, 
@@ -82,7 +85,9 @@ export default Task;
 // {
 //   userId:'sd423wder23', 
 //   title: 'study', 
-//   repetition:{type:'daily',value:'01/01/2025'},
+//   repetition:type:'daily',
+//   startFrom:'01/01/2025',
+//   endFrom:'29/11/4707',
 //   priority:high, 
 //   status: 'yet to start',
 //   type: 'measurable', 

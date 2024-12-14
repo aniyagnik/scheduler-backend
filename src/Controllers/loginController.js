@@ -56,7 +56,6 @@ console.log(`in Deserialized User `,userId)
 const user = await User.findById(userId)
 // This is the {user} that was saved in req.session.passport.user.{user} in the serializationUser()
 // deserializeUser will attach this {user} to the "req.user.{user}", so that it can be used anywhere in the App.
-console.log(`in Deserialized User done`,user)
 done (null, user)
 }) 
 
