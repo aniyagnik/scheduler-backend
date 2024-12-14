@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Task from './taskModel';
 
 const userModel = new mongoose.Schema({
   displayName: {
@@ -62,12 +63,12 @@ const userModel = new mongoose.Schema({
     const currTime = parseInt(currDate.getUTCHours())*60+parseInt(currDate.getUTCMinutes())
     const runAtTime = parseInt(this.newDayStartsAt.split(':')[0])*60+parseInt(this.newDayStartsAt.split(':')[1])
     this.dayStartsAt = new Date();
-    setTimeout(getTodaysTask,(runAtTime-currTime)*60*1000)
+    setTimeout(getTodaysTask,(runAtTime-currTime)*60*1000,this._id)
   }
   next();
 });
 
-// get user todays todo tasks from database
+// get user todays todo tasks from database - save it in userController
 const getTodaysTask = async (userId)=>{
   let user = User.findByIdAndUpdate(userId)
   const currDate = new Date
@@ -75,8 +76,24 @@ const getTodaysTask = async (userId)=>{
   const currTime = currDate.getUTCHours()+':'+currDate.getUTCMinutes()
   if(user.newDayStartsAt!=currTime) return;
 
-  const allTask = Task.find({userId,startDate:{$lte:currDate},endDate:{$gte:currDate}})
-  const taskIds = allTask.filter(task=>task._id)
+  const allTask = Task.find({userId,status:'ongoing'})
+  const taskIds = allTask.filter(task=>{
+    const taskType = task.repetition.type
+    if(taskType=='daily') return task._id
+    else if((taskType=='once') && 
+    (currDate.toLocaleDateString() == task.repetition.value))
+      return task._id
+    else if((taskType=='weekly') && 
+    (currDate.getDay().toString() == task.repetition.value))
+      return task._id
+    else if((taskType=='monthly') && 
+    (currDate.getDate().toString() == task.repetition.value))
+      return task._id
+    else if((taskType=='weekday') && 
+    (currDate.getDay().toString() != 6) && 
+    (currDate.getDay().toString() != 7))
+      return task._id
+  })
   user = User.findByIdAndUpdate(userId,{todaysTasks:taskIds})
   setTimeout(getTodaysTask,24*60*60*1000)
   return;
