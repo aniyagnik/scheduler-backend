@@ -50,10 +50,6 @@ const userModel = new mongoose.Schema({
       ref: "Task"
     }
   ],
-  priorityPoints:{ // priority high-100 points, med - 70 points,low - 40 points
-    type:[Number],
-    default:[100,70,40]
-  }
 })
 .pre('save', function(next) {
   // Only update currencyModifiedAt when currency changes

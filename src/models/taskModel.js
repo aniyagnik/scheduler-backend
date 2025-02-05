@@ -41,29 +41,39 @@ const taskModel = new mongoose.Schema({
     enum: ["ongoing", "halt",'complete'],
     require:true
   },
-  type: { // measurable or yes/no
-    type: String,
-    enum: ["measurable", "yes or no"],
+  isMeasurable: { // measurable - true or yes/no - false
+    type: Boolean,
     require:true
   }, 
   unit: { // hours,rep, kms etc. null if type = yes|no
     type: String,
   }, 
   targetType: { // atleast or atmost, only required if type is measurable null if type = yes|no
-    type: String,
+    type: String ,
     enum: ["atleast", "atmost"],
   }, 
   target: { // target value, only required if type is measurable. null if type = yes|no
     type: Number,
-    require:true
   }, 
-  score: [  // score achieved, if type is yes|no, points-1(done), points-0(not done) 
+  remark:{
+    type:String
+  },
+  colour:{
+    type:String
+  },
+  taskReport: [  // stores workDone in a day, if type is yes|no, isDone - true|false
     {
       date:{
+        type:Date,
+      },
+      workDone:{
         type:Number
       },
-      points:{
-        type:Number
+      isDone:{
+        type:Boolean
+      },
+      remark:{
+       type: String 
       }
     }
   ], 
@@ -91,6 +101,9 @@ export default Task;
 //   unit: 'hours', 
 //   targetType: 'atleast', 
 //   target: 10, 
-//   score: [{date:'01/01/2024',points:4},{date:'02/01/2024',points:8}], 
+//   taskReport: [
+//    {date:'01/01/2024',workDone:4,remark:'wastes evening time'},
+//    {date:'02/01/2024',workDone:8,remark:'very good day'}
+//    ], 
 //   timePeriod:['sfsdfsdf2','213eqwdd','12qewdasas'],
 // }

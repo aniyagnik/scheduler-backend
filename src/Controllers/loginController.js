@@ -65,18 +65,6 @@ const googleAuth = passport.authenticate('google',{
 	approvalPrompt: 'force'
 })
 
-const userDashboard = (req,res) => {
-  if(!req.user) res.redirect('/')
-	return res
-		.status(200)
-		.json(
-			new ApiResponse(
-				200, 
-				"User in dashboard"
-			)
-		)
-}
-
 const logoutUser = async(req, res) => {
   if(!req.user) res.redirect('/')
   req.logout(err =>{
@@ -90,6 +78,5 @@ const logoutUser = async(req, res) => {
 export {
   googleAuth,
   loginUser,
-  userDashboard,
   logoutUser
 }
