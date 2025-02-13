@@ -61,6 +61,19 @@ const taskModel = new mongoose.Schema({
   colour:{
     type:String
   },
+  streak:[
+    {
+      text:{
+        type:String
+      },
+      from:{
+        type:Date
+      },
+      to:{
+        type:Date
+      },
+    }
+  ],
   taskReport: [  // stores workDone in a day, if type is yes|no, isDone - true|false
     {
       date:{
