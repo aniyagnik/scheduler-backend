@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Task from './taskModel';
+import Task from './taskModel.js';
 
 const userModel = new mongoose.Schema({
   displayName: {
